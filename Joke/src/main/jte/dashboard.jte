@@ -638,7 +638,7 @@
                         </div>
                         <span>View All Guides</span>
                     </a>
-                    <a href="/dashboard" class="quick-link">
+                    <a href="/dashboard/progress" class="quick-link">
                         <div class="quick-link-icon">
                             <i class="fas fa-chart-line"></i>
                         </div>

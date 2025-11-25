@@ -348,10 +348,13 @@
                         <option value="detailed">Detailed</option>
                         <option value="very detailed">Very Detailed</option>
                     </select>
-                    <button type="submit" class="btn btn-primary" onclick="return confirm('This will regenerate all AI content. Continue?')">
+                    <button id="submit-btn" type="submit" class="btn btn-primary" onclick="return confirm('This will regenerate all AI content. Continue?')">
                         <i class="fas fa-sync-alt"></i> Regenerate All AI Content
                     </button>
                 </form>
+                <div id="loading-message" style="display:none; margin-top: 12px; color: #2563eb; font-weight: 600;">
+                    <i class="fas fa-spinner fa-spin"></i> Generating your study guide, please wait...
+                </div>
                 <button class="btn btn-outline" onclick="toggleEditMode()">
                     <i class="fas fa-edit"></i> Edit AI Content
                 </button>
@@ -500,6 +503,20 @@
             form.style.display = 'none';
         });
     }
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const regenerateForm = document.querySelector('form[action*="/regenerate"]');
+        const loadingMessage = document.getElementById('loading-message');
+        const submitBtn = regenerateForm.querySelector('#submit-btn');
+
+        regenerateForm.addEventListener('submit', function(event) {
+            // Disable button to avoid multiple submits
+            submitBtn.disabled = true;
+            // Show loading message
+            loadingMessage.style.display = 'block';
+        });
+    });
 </script>
 </body>
 </html>
