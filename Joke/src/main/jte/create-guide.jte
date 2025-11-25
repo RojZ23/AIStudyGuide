@@ -345,7 +345,9 @@
                     </label>
                     <input type="text" name="title" id="title" placeholder="Enter a descriptive title for your study guide" required/>
                 </div>
-
+                <div id="loading-message" style="display:none; margin-top: 12px; color: #2563eb; font-weight: 600;">
+                    <i class="fas fa-spinner fa-spin"></i> Generating your study guide, please wait...
+                </div>
                 <div class="form-group">
                     <label for="notes">
                         <i class="fas fa-sticky-note"></i> Notes Content
@@ -377,7 +379,7 @@
                     </select>
                 </div>
 
-                <button type="submit" class="btn btn-primary">
+                <button id="submit-btn" type="submit" class="btn btn-primary">
                     <i class="fas fa-rocket"></i> Create Study Guide
                 </button>
             </form>
@@ -431,6 +433,18 @@
             fileLabel.textContent = 'Upload Notes File (.txt, .md, .docx)';
         }
     }
+</script>
+<script>
+    const form = document.querySelector('form');
+    const loadingMessage = document.getElementById('loading-message');
+    const submitBtn = document.getElementById('submit-btn');
+
+    form.addEventListener('submit', function(event) {
+        // Disable submit button to prevent double submission
+        submitBtn.disabled = true;
+        // Show loading message
+        loadingMessage.style.display = 'block';
+    });
 </script>
 </body>
 </html>
