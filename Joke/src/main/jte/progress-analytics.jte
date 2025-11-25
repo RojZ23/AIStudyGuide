@@ -29,6 +29,20 @@
             font-size: 24px;
         }
         .card label { color: #64748b; font-weight: 500; }
+        .btn-back {
+            display: inline-block;
+            padding: 10px 18px;
+            margin-bottom: 20px;
+            background-color: #2563eb;
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background-color 0.2s ease;
+        }
+        .btn-back:hover {
+            background-color: #1d4ed8;
+        }
     </style>
 </head>
 <body>
@@ -59,6 +73,9 @@
         <label>Average Quiz Score</label>
         <span>${String.format("%.2f", averageScore)}%</span>
     </div>
+</div>
+<div style="display: flex; justify-content: center; margin-bottom: 20px;">
+    <a href="/dashboard" class="btn-back">← Back to Dashboard</a>
 </div>
 </body>
 </html>
