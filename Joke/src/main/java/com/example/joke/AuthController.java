@@ -1,3 +1,4 @@
+// AuthController.java
 package com.example.joke;
 
 import jakarta.servlet.http.HttpSession;
@@ -7,10 +8,10 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 public class AuthController {
 
-    private final DataStore store;
+    private final UserService userService;
 
-    public AuthController(DataStore store) {
-        this.store = store;
+    public AuthController(UserService userService) {
+        this.userService = userService;
     }
 
     @GetMapping("/register")
@@ -20,8 +21,8 @@ public class AuthController {
 
     @PostMapping("/register")
     public String register(@RequestParam String username, @RequestParam String password) {
-        if(!store.addUser(new User(username, password))) {
-            return "register"; // Could add error message support
+        if(!userService.registerUser(username, password)) {
+            return "register";
         }
         return "redirect:/login";
     }
@@ -33,11 +34,11 @@ public class AuthController {
 
     @PostMapping("/login")
     public String login(@RequestParam String username, @RequestParam String password, HttpSession session) {
-        if(store.validateUser(username, password)) {
+        if(userService.validateUser(username, password)) {
             session.setAttribute("username", username);
             return "redirect:/dashboard";
         }
-        return "login"; // Could add error message support
+        return "login";
     }
 
     @GetMapping("/logout")

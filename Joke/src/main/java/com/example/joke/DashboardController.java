@@ -1,3 +1,4 @@
+// DashboardController.java
 package com.example.joke;
 
 import jakarta.servlet.http.HttpSession;
@@ -8,12 +9,16 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 public class DashboardController {
 
-    private final DataStore store;
-    private final AIService aiService;
+    private final UserService userService;
+    private final StudyGuideService studyGuideService;
+    private final QuizService quizService;
 
-    public DashboardController(DataStore store, AIService aiService) {
-        this.store = store;
-        this.aiService = aiService;
+    public DashboardController(UserService userService,
+                               StudyGuideService studyGuideService,
+                               QuizService quizService) {
+        this.userService = userService;
+        this.studyGuideService = studyGuideService;
+        this.quizService = quizService;
     }
 
     @GetMapping("/dashboard")
@@ -22,26 +27,13 @@ public class DashboardController {
         if(username == null) return "redirect:/login";
 
         model.addAttribute("username", username);
-        model.addAttribute("assets", store.getAssets(username));
+        model.addAttribute("studyGuides", studyGuideService.getUserStudyGuides(username));
+        model.addAttribute("quizzes", quizService.getUserQuizzes(username));
         return "dashboard";
-    }
-
-    @PostMapping("/generate")
-    public String generateAsset(@RequestParam String prompt, HttpSession session, Model model) {
-        String username = (String) session.getAttribute("username");
-        if(username == null) return "redirect:/login";
-
-        // Use AI service to create an asset
-        String generatedAsset = aiService.generateAsset(prompt);
-        store.addAsset(username, generatedAsset);
-
-        return "redirect:/dashboard";
     }
 
     @GetMapping("/")
     public String home() {
         return "redirect:/login";
     }
-
-
 }
