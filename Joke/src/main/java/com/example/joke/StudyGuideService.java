@@ -120,6 +120,43 @@ public class StudyGuideService {
         }
         studyGuideRepository.deleteById(id);
     }
+    public List<Flashcard> generateFlashcardsFromNotes(StudyGuide guide) {
+        // Regenerate key terms from notes
+        String notes = guide.getOriginalNotes();
+        if (notes != null && !notes.isBlank()) {
+            String regeneratedKeyTerms = aiService.generateAsset("Extract key terms and definitions from these notes: " + notes);
+            guide.setKeyTerms(regeneratedKeyTerms);
+            studyGuideRepository.save(guide);  // Persist updated key terms
+
+            // Delete existing flashcards
+            List<Flashcard> existing = flashcardRepository.findByStudyGuideId(guide.getId());
+            if (!existing.isEmpty()) {
+                flashcardRepository.deleteAll(existing);
+            }
+
+            // Parse regenerated key terms into flashcards
+            List<Flashcard> newFlashcards = new ArrayList<>();
+            String[] lines = regeneratedKeyTerms.split("\\r?\\n");
+            for (String line : lines) {
+                if (line.contains("-")) {
+                    String[] parts = line.split("-", 2);
+                    String term = parts[0].trim();
+                    String def = parts[1].trim();
+                    Flashcard flashcard = new Flashcard();
+                    flashcard.setTerm(term);
+                    flashcard.setDefinition(def);
+                    flashcard.setStudyGuide(guide);
+                    newFlashcards.add(flashcard);
+                }
+            }
+            flashcardRepository.saveAll(newFlashcards);
+            return newFlashcards;
+        }
+        return List.of();
+    }
+
+    // Existing helper methods...
+
     public List<Flashcard> generateFlashcardsFromKeyTerms(Long studyGuideId) {
         StudyGuide guide = studyGuideRepository.findById(studyGuideId)
                 .orElseThrow(() -> new RuntimeException("Study guide not found"));

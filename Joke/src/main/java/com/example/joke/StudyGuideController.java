@@ -57,6 +57,7 @@ public class StudyGuideController {
         studyGuideService.generateFlashcardsFromKeyTerms(id);
         return "redirect:/guides/" + id + "/flashcards";
     }
+
     @GetMapping("/{id}/flashcards")
     public String viewFlashcards(@PathVariable Long id, HttpSession session, Model model) {
         String username = (String) session.getAttribute("username");
