@@ -11,6 +11,7 @@ public class UserService {
 
     private final UserRepository userRepository;
 
+
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
@@ -29,7 +30,18 @@ public class UserService {
         return user.isPresent() && user.get().getPassword().equals(password);
     }
 
+    public void updatePassword(String username, String newPassword) {
+        Optional<User> userOpt = userRepository.findByUsername(username);
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            // In a real app you should encode/hash the password here
+            user.setPassword(newPassword);
+            userRepository.save(user);
+        }
+    }
+
     public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);
     }
+
 }
