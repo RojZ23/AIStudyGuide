@@ -324,7 +324,7 @@
         <div class="sidebar-title">Navigation</div>
         <div class="sidebar-nav">
             <a href="/dashboard"><i class="fas fa-th-large"></i> Dashboard</a>
-            <a href="/dashboard"><i class="fas fa-list"></i> View List</a>
+            <a href="/guides/list"><i class="fas fa-list"></i> View List</a>
             <a href="#" class="active"><i class="fas fa-book"></i> Study Guide</a>
             <a href="/dashboard"><i class="fas fa-user"></i> Your Account</a>
         </div>
@@ -505,17 +505,15 @@
     }
 </script>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const regenerateForm = document.querySelector('form[action*="/regenerate"]');
-        const loadingMessage = document.getElementById('loading-message');
-        const submitBtn = regenerateForm.querySelector('#submit-btn');
+    const form = document.querySelector('form');
+    const loadingMessage = document.getElementById('loading-message');
+    const submitBtn = document.getElementById('submit-btn');
 
-        regenerateForm.addEventListener('submit', function(event) {
-            // Disable button to avoid multiple submits
-            submitBtn.disabled = true;
-            // Show loading message
-            loadingMessage.style.display = 'block';
-        });
+    form.addEventListener('submit', function(event) {
+        // Disable submit button to prevent double submission
+        submitBtn.disabled = true;
+        // Show loading message
+        loadingMessage.style.display = 'block';
     });
 </script>
 </body>

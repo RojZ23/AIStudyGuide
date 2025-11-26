@@ -632,7 +632,7 @@
                         </div>
                         <span>Create New Guide</span>
                     </a>
-                    <a href="/dashboard" class="quick-link">
+                    <a href="/guides/list" class="quick-link">
                         <div class="quick-link-icon">
                             <i class="fas fa-list"></i>
                         </div>

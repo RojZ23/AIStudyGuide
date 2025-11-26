@@ -326,7 +326,7 @@
     <nav>
         <a href="/dashboard"><i class="fas fa-th-large"></i> Dashboard</a>
         <a href="/guides/create" class="active"><i class="fas fa-plus-circle"></i> Create Guide</a>
-        <a href="/dashboard"><i class="fas fa-book"></i> Guides</a>
+        <a href="/guides/list"><i class="fas fa-book"></i> Guides</a>
         <a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
     </nav>
 </header>

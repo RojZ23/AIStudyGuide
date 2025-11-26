@@ -130,6 +130,7 @@ public class StudyGuideController {
         quizService.createQuizFromStudyGuide(id, username);
         return "redirect:/dashboard";
     }
+    // Inside StudyGuideController.java
 
     @GetMapping("/list")
     public String listGuides(HttpSession session, Model model) {
