@@ -5,166 +5,165 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login to Your Account</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        :root {
+            --space-xs: 6px;
+            --space-sm: 10px;
+            --space-md: 16px;
+            --space-lg: 24px;
+            --radius-full: 999px;
         }
-
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            margin: 0;
             min-height: 100vh;
-            padding: 20px;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background:
+                    radial-gradient(circle at top, #1d4ed8 0, transparent 55%),
+                    radial-gradient(circle at bottom, #0f766e 0, transparent 55%),
+                    #020617;
+            color: #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-lg);
         }
-
         .container {
+            align-items: center;
+            background:
+                    radial-gradient(circle at top left, rgba(56, 189, 248, 0.16), transparent 55%),
+                    radial-gradient(circle at bottom right, rgba(129, 140, 248, 0.18), transparent 55%),
+                    rgba(15, 23, 42, 0.96);
+            border: 1px solid rgba(148, 163, 184, 0.35);
+            box-shadow: 0 24px 60px rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(24px);
+            border-radius: 20px;
+            padding: 50px 45px; /* increased padding to add more space inside */
+            max-width: 520px; /* increased max-width to be wider than input width */
+            min-width: 350px; /* minimum width to ensure card doesn't shrink too small */
             width: 100%;
-            max-width: 450px;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-            padding: 40px 35px;
-            animation: fadeIn 0.5s ease-out;
         }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
         .logo {
             text-align: center;
             margin-bottom: 25px;
         }
-
         .logo-text {
             font-size: 28px;
             font-weight: 700;
-            color: #4299e1;
+            background: linear-gradient(120deg, #60a5fa, #a855f7, #22c55e);
+            -webkit-background-clip: text;
+            color: transparent;
             margin-bottom: 5px;
         }
-
         .logo-subtitle {
             font-size: 15px;
-            color: #718096;
+            color: #9ca3af;
         }
-
         h2 {
-            color: #2c3e50;
+            color: #e5e7eb;
             text-align: center;
             margin-bottom: 30px;
             font-weight: 600;
             font-size: 24px;
         }
-
         .form-group {
             margin-bottom: 20px;
         }
-
         label {
             display: block;
             margin-bottom: 8px;
-            color: #4a5568;
+            color: #9ca3af;
             font-weight: 500;
             font-size: 14px;
         }
-
         input {
             width: 100%;
-            padding: 14px 16px;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
+            padding: 12px 7px;
+            border: 1px solid rgba(148, 163, 184, 0.6);
+            border-radius: var(--radius-full);
             font-size: 16px;
+            background-color: rgba(15, 23, 42, 0.8);
+            color: #e5e7eb;
             transition: all 0.3s;
-            background-color: #f8fafc;
         }
-
+        input::placeholder {
+            color: #9ca3af;
+        }
         input:focus {
             outline: none;
-            border-color: #4299e1;
-            background-color: white;
-            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+            border-color: #60a5fa;
+            background-color: rgba(15, 23, 42, 0.95);
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.5);
+            color: #e5e7eb;
         }
-
         .submit-btn {
             width: 100%;
-            padding: 14px;
-            background-color: #4299e1;
-            color: white;
+            margin-top: 10px;
+            padding: 10px;
+            background: radial-gradient(circle at top left, #4f46e5, #2563eb);
+            color: #e5e7eb;
             border: none;
-            border-radius: 8px;
+            border-radius: var(--radius-full);
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.3s;
-            margin-top: 10px;
+            transition: background-color 0.3s, box-shadow 0.1s;
+            box-shadow:
+                    0 12px 30px rgba(37, 99, 235, 0.7),
+                    0 0 0 1px rgba(129, 140, 248, 0.7);
         }
-
         .submit-btn:hover {
-            background-color: #3182ce;
+            background-color: #2563eb;
+            box-shadow:
+                    0 18px 40px rgba(37, 99, 235, 0.9),
+                    0 0 0 1px rgba(191, 219, 254, 0.9);
+            transform: translateY(-1px);
         }
-
+        .forgot-password {
+            text-align: right;
+            margin-top: 0px;
+        }
+        .forgot-password a {
+            color: #9ca3af;
+            font-size: 14px;
+            text-decoration: none;
+        }
+        .forgot-password a:hover {
+            color: #60a5fa;
+            text-decoration: underline;
+        }
         .register-link {
             text-align: center;
             margin-top: 25px;
-            color: #718096;
+            color: #9ca3af;
             font-size: 15px;
         }
-
         .register-link a {
-            color: #4299e1;
+            color: #60a5fa;
             text-decoration: none;
             font-weight: 500;
         }
-
         .register-link a:hover {
             text-decoration: underline;
         }
-
         .divider {
             display: flex;
             align-items: center;
             margin: 25px 0;
         }
-
         .divider::before,
         .divider::after {
             content: "";
             flex: 1;
-            border-bottom: 1px solid #e2e8f0;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.35);
         }
-
         .divider span {
             padding: 0 15px;
-            color: #a0aec0;
+            color: #9ca3af;
             font-size: 14px;
         }
-
-        .forgot-password {
-            text-align: right;
-            margin-top: 10px;
-        }
-
-        .forgot-password a {
-            color: #718096;
-            font-size: 14px;
-            text-decoration: none;
-        }
-
-        .forgot-password a:hover {
-            color: #4299e1;
-            text-decoration: underline;
-        }
-
         @media (max-width: 480px) {
             .container {
                 padding: 30px 25px;
             }
-
             h2 {
                 font-size: 22px;
             }
