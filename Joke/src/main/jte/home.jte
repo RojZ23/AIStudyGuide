@@ -5,6 +5,14 @@
     <title>AI Study Guide Generator</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
+        :root {
+            --space-xs: 6px;
+            --space-sm: 10px;
+            --space-md: 16px;
+            --space-lg: 24px;
+            --radius-full: 999px;
+        }
+
         body {
             margin: 0;
             min-height: 100vh;
@@ -17,7 +25,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 24px;
+            padding: var(--space-lg);
         }
 
         .shell {
@@ -25,7 +33,7 @@
             max-width: 980px;
             display: grid;
             grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
-            gap: 32px;
+            gap: 40px;
             align-items: center;
         }
 
@@ -37,14 +45,17 @@
 
         .hero {
             max-width: 520px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
         }
 
         .badge {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            padding: 4px 10px;
-            border-radius: 999px;
+            gap: var(--space-xs);
+            padding: 4px 12px;
+            border-radius: var(--radius-full);
             border: 1px solid rgba(148, 163, 184, 0.5);
             background: rgba(15, 23, 42, 0.9);
             font-size: 11px;
@@ -56,13 +67,13 @@
         .badge-dot {
             width: 8px;
             height: 8px;
-            border-radius: 999px;
+            border-radius: var(--radius-full);
             background: radial-gradient(circle at 30% 20%, #a5b4fc 0, #4f46e5 40%, #22c55e 100%);
             box-shadow: 0 0 16px rgba(129, 140, 248, 0.9);
         }
 
         h1 {
-            margin: 18px 0 10px;
+            margin: 0;
             font-size: clamp(2.4rem, 3vw + 1rem, 3.3rem);
             line-height: 1.05;
             letter-spacing: -0.04em;
@@ -75,7 +86,7 @@
         }
 
         .subtitle {
-            margin: 0 0 20px;
+            margin: 0;
             font-size: 14px;
             color: #9ca3af;
             max-width: 430px;
@@ -90,21 +101,25 @@
             display: flex;
             flex-wrap: wrap;
             gap: 12px;
-            margin-bottom: 18px;
         }
 
-        .btn-primary, .btn-outline {
+        .btn-primary,
+        .btn-outline {
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 6px;
             padding: 10px 18px;
-            border-radius: 999px;
+            border-radius: var(--radius-full);
             font-size: 13px;
             font-weight: 500;
             text-decoration: none;
             cursor: pointer;
-            transition: transform 0.07s ease-out, box-shadow 0.1s ease-out, background 0.1s ease-out, color 0.1s ease-out;
+            transition:
+                    transform 0.07s ease-out,
+                    box-shadow 0.1s ease-out,
+                    background 0.1s ease-out,
+                    color 0.1s ease-out;
         }
 
         .btn-primary {
@@ -134,6 +149,7 @@
         }
 
         .cta-note {
+            margin: 0;
             font-size: 11px;
             color: #9ca3af;
         }
@@ -151,18 +167,20 @@
                     radial-gradient(circle at bottom right, rgba(129, 140, 248, 0.18), transparent 55%),
                     rgba(15, 23, 42, 0.96);
             border: 1px solid rgba(148, 163, 184, 0.35);
-            box-shadow:
-                    0 24px 60px rgba(15, 23, 42, 0.95);
+            box-shadow: 0 24px 60px rgba(15, 23, 42, 0.95);
             backdrop-filter: blur(24px);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
         .panel-title {
             font-size: 13px;
             color: #e5e7eb;
-            margin-bottom: 10px;
             display: flex;
             align-items: center;
-            gap: 6px;
+            justify-content: space-between;
+            gap: 10px;
         }
 
         .pill {
@@ -170,24 +188,28 @@
             text-transform: uppercase;
             letter-spacing: 0.12em;
             padding: 2px 7px;
-            border-radius: 999px;
+            border-radius: var(--radius-full);
             border: 1px solid rgba(129, 140, 248, 0.7);
             color: #c7d2fe;
             background: rgba(15, 23, 42, 0.8);
+            white-space: nowrap;
         }
 
         .panel-list {
             list-style: none;
-            padding-left: 0;
+            padding: 0;
             margin: 0;
             font-size: 12px;
             color: #9ca3af;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
         }
 
         .panel-list li {
             display: flex;
             gap: 8px;
-            padding: 6px 0;
+            align-items: flex-start;
         }
 
         .panel-list li span {
@@ -228,7 +250,7 @@
 
     <aside class="panel">
         <div class="panel-title">
-            What can it generate?
+            <span>What can it generate?</span>
             <span class="pill">Live preview</span>
         </div>
         <ul class="panel-list">
