@@ -8,8 +8,8 @@ public class Flashcard {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String term;
-    private String definition;
+    public String term;
+    public String definition;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "study_guide_id")

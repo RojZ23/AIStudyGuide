@@ -14,7 +14,6 @@ import java.util.Optional;
 @Controller
 @RequestMapping("/guides")
 public class StudyGuideController {
-
     private final StudyGuideService studyGuideService;
     private final QuizService quizService;
 
@@ -48,6 +47,25 @@ public class StudyGuideController {
 
         studyGuideService.createStudyGuide(title, notesContent, username, difficulty);
         return "redirect:/dashboard";
+    }
+
+    @PostMapping("/{id}/flashcards")
+    public String generateFlashcards(@PathVariable Long id, HttpSession session) {
+        String username = (String) session.getAttribute("username");
+        if (username == null) return "redirect:/login";
+
+        studyGuideService.generateFlashcardsFromKeyTerms(id);
+        return "redirect:/guides/" + id + "/flashcards";
+    }
+    @GetMapping("/{id}/flashcards")
+    public String viewFlashcards(@PathVariable Long id, HttpSession session, Model model) {
+        String username = (String) session.getAttribute("username");
+        if (username == null) return "redirect:/login";
+
+        List<Flashcard> flashcards = studyGuideService.getFlashcardsForStudyGuide(id);
+        model.addAttribute("flashcards", flashcards);
+        model.addAttribute("studyGuideId", id);
+        return "view-flashcards";
     }
 
     @GetMapping("/{id:\\d+}")

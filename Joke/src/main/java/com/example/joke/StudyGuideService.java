@@ -10,7 +10,6 @@ import java.util.Optional;
 @Service
 @Transactional
 public class StudyGuideService {
-
     private final StudyGuideRepository studyGuideRepository;
     private final UserRepository userRepository;
     private final AIService aiService;
@@ -125,23 +124,25 @@ public class StudyGuideService {
         StudyGuide guide = studyGuideRepository.findById(studyGuideId)
                 .orElseThrow(() -> new RuntimeException("Study guide not found"));
 
-        // Remove old flashcards for fresh gen
-        List<Flashcard> oldFlashcards = flashcardRepository.findByStudyGuideId(studyGuideId);
-        if (!oldFlashcards.isEmpty()) {
-            flashcardRepository.deleteAll(oldFlashcards);
+        List<Flashcard> existing = flashcardRepository.findByStudyGuideId(studyGuideId);
+        if (!existing.isEmpty()) {
+            flashcardRepository.deleteAll(existing);
         }
 
+        String keyTerms = guide.getKeyTerms();
         List<Flashcard> flashcards = new ArrayList<>();
-        if (guide.getKeyTerms() != null && !guide.getKeyTerms().trim().isEmpty()) {
-            String[] lines = guide.getKeyTerms().split("\\r?\\n");
+        if (keyTerms != null && !keyTerms.isBlank()) {
+            String[] lines = keyTerms.split("\\r?\\n");
             for (String line : lines) {
                 if (line.contains("-")) {
                     String[] parts = line.split("-", 2);
-                    Flashcard fc = new Flashcard();
-                    fc.setTerm(parts[0].trim());
-                    fc.setDefinition(parts[1].trim());
-                    fc.setStudyGuide(guide);
-                    flashcards.add(fc);
+                    String term = parts[0].trim();
+                    String def = parts[1].trim();
+                    Flashcard flashcard = new Flashcard();
+                    flashcard.setTerm(term);
+                    flashcard.setDefinition(def);
+                    flashcard.setStudyGuide(guide);
+                    flashcards.add(flashcard);
                 }
             }
             flashcardRepository.saveAll(flashcards);

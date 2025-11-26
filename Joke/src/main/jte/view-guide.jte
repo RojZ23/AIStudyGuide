@@ -425,6 +425,12 @@
             <form action="/guides/${guide.id}/quiz" method="post" style="display: inline;">
                 <button type="submit" class="btn-save"><i class="fas fa-play"></i> Generate & Save Quiz</button>
             </form>
+            <form action="/guides/${guide.id}/flashcards" method="post" style="display: inline;">
+                <button type="submit" class="btn btn-outline"
+                        onclick="return confirm('Generate flashcards from key terms?')">
+                    <i class="fas fa-clone"></i> Generate Flashcards
+                </button>
+            </form>
             <form action="/guides/${guide.id}/delete" method="post" style="display: inline;">
                 <button type="submit" class="btn-delete" onclick="return confirm('Are you sure you want to delete this guide?')">
                     <i class="fas fa-trash"></i> Delete Guide
