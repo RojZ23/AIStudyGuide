@@ -447,6 +447,9 @@
                         <button type="button" class="btn btn-submit" id="submitButton" onclick="submitQuiz()">
                             <i class="fas fa-check"></i> Submit Quiz
                         </button>
+                        <button type="button" class="btn btn-secondary" id="deleteButton" onclick="confirmDelete()">
+                            <i class="fas fa-trash"></i> Delete Quiz
+                        </button>
                         <a href="/dashboard" class="btn btn-secondary">
                             <i class="fas fa-arrow-left"></i> Back
                         </a>
@@ -684,6 +687,16 @@
         document.querySelectorAll('.option-input').forEach(inp => {
             inp.disabled = true;
         });
+    }
+    function confirmDelete() {
+        if (confirm('Are you sure you want to delete this quiz? This action cannot be undone.')) {
+            // Create and submit a form POSTing to the delete endpoint
+            const form = document.createElement('form');
+            form.method = 'post';
+            form.action = '/quizzes/${quiz.id}/delete';
+            document.body.appendChild(form);
+            form.submit();
+        }
     }
 </script>
 </body>

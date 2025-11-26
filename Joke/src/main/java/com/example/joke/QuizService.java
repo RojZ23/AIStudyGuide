@@ -65,6 +65,7 @@ public class QuizService {
         return quizRepository.findByUserUsernameOrderByCreatedAtDesc(username);
     }
 
+
     public Optional<Quiz> getQuizById(Long id) {
         return quizRepository.findById(id);
     }
