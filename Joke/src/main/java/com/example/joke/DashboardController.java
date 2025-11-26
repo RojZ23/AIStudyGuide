@@ -36,8 +36,9 @@ public class DashboardController {
 
     @GetMapping("/")
     public String home() {
-        return "redirect:/login";
+        return "home";
     }
+
     @GetMapping("/dashboard/progress")
     public String progressAnalytics(HttpSession session, Model model) {
         String username = (String) session.getAttribute("username");
