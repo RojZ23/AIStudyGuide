@@ -10,6 +10,7 @@ import java.util.Optional;
 @Service
 @Transactional
 public class StudyGuideService {
+
     private final StudyGuideRepository studyGuideRepository;
     private final UserRepository userRepository;
     private final AIService aiService;
@@ -82,6 +83,10 @@ public class StudyGuideService {
         throw new RuntimeException("Study guide not found");
     }
 
+    /**
+     * Strongly specify the key‑term format so parsing is reliable:
+     * one per line, "Term - short definition".
+     */
     private void generateAIContent(StudyGuide guide, String notes, String difficulty) {
         try {
             String detailLevelPrompt;
@@ -99,9 +104,20 @@ public class StudyGuideService {
                     detailLevelPrompt = "Provide a concise summary.";
             }
 
-            String summary = aiService.generateAsset(detailLevelPrompt + " Create a summary of these notes: " + notes);
-            String keyTerms = aiService.generateAsset("Extract key terms and definitions from these notes: " + notes);
-            String questions = aiService.generateAsset("Generate 5 practice questions with answers based on these notes: " + notes);
+            String summaryPrompt = detailLevelPrompt +
+                    " Create a summary of these notes. Use short paragraphs.";
+            String keyTermsPrompt =
+                    "Extract the most important key terms and definitions from these notes. " +
+                            "Respond ONLY as plain text, one term per line, in this exact format:\n" +
+                            "Term - short definition\n" +
+                            "Do not number the items, do not use bullets, and do not add any extra text before or after the list.";
+            String questionsPrompt =
+                    "Generate 5 practice questions with answers based on these notes. " +
+                            "Keep questions and answers short and clear.";
+
+            String summary = aiService.generateAsset(summaryPrompt + " Notes: " + notes);
+            String keyTerms = aiService.generateAsset(keyTermsPrompt + " Notes: " + notes);
+            String questions = aiService.generateAsset(questionsPrompt + " Notes: " + notes);
 
             guide.setAiSummary(summary);
             guide.setKeyTerms(keyTerms);
@@ -120,13 +136,21 @@ public class StudyGuideService {
         }
         studyGuideRepository.deleteById(id);
     }
+
+    /**
+     * Regenerate key terms from the raw notes and then parse into flashcards.
+     * This is useful if the user wants to refresh based on updated notes.
+     */
     public List<Flashcard> generateFlashcardsFromNotes(StudyGuide guide) {
-        // Regenerate key terms from notes
         String notes = guide.getOriginalNotes();
         if (notes != null && !notes.isBlank()) {
-            String regeneratedKeyTerms = aiService.generateAsset("Extract key terms and definitions from these notes: " + notes);
+            String regeneratedKeyTerms = aiService.generateAsset(
+                    "Extract key terms and definitions from these notes. " +
+                            "Respond ONLY as plain text, one per line, format: Term - short definition. " +
+                            "No numbering, no bullets, no extra commentary. Notes: " + notes
+            );
             guide.setKeyTerms(regeneratedKeyTerms);
-            studyGuideRepository.save(guide);  // Persist updated key terms
+            studyGuideRepository.save(guide);
 
             // Delete existing flashcards
             List<Flashcard> existing = flashcardRepository.findByStudyGuideId(guide.getId());
@@ -134,28 +158,12 @@ public class StudyGuideService {
                 flashcardRepository.deleteAll(existing);
             }
 
-            // Parse regenerated key terms into flashcards
-            List<Flashcard> newFlashcards = new ArrayList<>();
-            String[] lines = regeneratedKeyTerms.split("\\r?\\n");
-            for (String line : lines) {
-                if (line.contains("-")) {
-                    String[] parts = line.split("-", 2);
-                    String term = parts[0].trim();
-                    String def = parts[1].trim();
-                    Flashcard flashcard = new Flashcard();
-                    flashcard.setTerm(term);
-                    flashcard.setDefinition(def);
-                    flashcard.setStudyGuide(guide);
-                    newFlashcards.add(flashcard);
-                }
-            }
+            List<Flashcard> newFlashcards = buildFlashcardsFromKeyTermsString(guide, regeneratedKeyTerms);
             flashcardRepository.saveAll(newFlashcards);
             return newFlashcards;
         }
         return List.of();
     }
-
-    // Existing helper methods...
 
     public List<Flashcard> generateFlashcardsFromKeyTerms(Long studyGuideId) {
         StudyGuide guide = studyGuideRepository.findById(studyGuideId)
@@ -167,27 +175,65 @@ public class StudyGuideService {
         }
 
         String keyTerms = guide.getKeyTerms();
-        List<Flashcard> flashcards = new ArrayList<>();
-        if (keyTerms != null && !keyTerms.isBlank()) {
-            String[] lines = keyTerms.split("\\r?\\n");
-            for (String line : lines) {
-                if (line.contains("-")) {
-                    String[] parts = line.split("-", 2);
-                    String term = parts[0].trim();
-                    String def = parts[1].trim();
-                    Flashcard flashcard = new Flashcard();
-                    flashcard.setTerm(term);
-                    flashcard.setDefinition(def);
-                    flashcard.setStudyGuide(guide);
-                    flashcards.add(flashcard);
-                }
-            }
-            flashcardRepository.saveAll(flashcards);
+        if (keyTerms == null || keyTerms.isBlank()) {
+            return List.of();
         }
+
+        List<Flashcard> flashcards = buildFlashcardsFromKeyTermsString(guide, keyTerms);
+        flashcardRepository.saveAll(flashcards);
         return flashcards;
     }
 
     public List<Flashcard> getFlashcardsForStudyGuide(Long studyGuideId) {
         return flashcardRepository.findByStudyGuideId(studyGuideId);
+    }
+
+    /**
+     * Robust parser that handles:
+     * - pure "Term - definition"
+     * - numbered lines like "8. Carbon Dioxide (CO2)**: A colorless..."
+     * - markdown bold around terms "**Carbon Dioxide (CO2)**: A colorless..."
+     */
+    private List<Flashcard> buildFlashcardsFromKeyTermsString(StudyGuide guide, String keyTermsRaw) {
+        List<Flashcard> flashcards = new ArrayList<>();
+        String[] lines = keyTermsRaw.split("\\r?\\n");
+
+        for (String rawLine : lines) {
+            String line = rawLine.trim();
+            if (line.isEmpty()) continue;
+
+            // Strip leading numbering/bullets: "1. ", "8) ", "- ", "* ", etc.
+            line = line.replaceFirst("^[0-9]+[.)]\\s*", "");
+            line = line.replaceFirst("^[\\-*•]\\s*", "");
+
+            // Sometimes the model may output "**Term**: definition"
+            // Normalize first ":" to "-" so the existing split logic still works.
+            if (!line.contains("-") && line.contains(":")) {
+                line = line.replaceFirst(":", " -");
+            }
+
+            if (!line.contains("-")) {
+                continue; // still not in expected format, skip
+            }
+
+            String[] parts = line.split("-", 2);
+            String term = parts[0].trim();
+            String def = parts[1].trim();
+
+            // Remove markdown bold markers from term if present
+            term = term.replaceAll("^\\*\\*|\\*\\*$", "").trim();
+
+            if (term.isEmpty() || def.isEmpty()) {
+                continue;
+            }
+
+            Flashcard flashcard = new Flashcard();
+            flashcard.setTerm(term);
+            flashcard.setDefinition(def);
+            flashcard.setStudyGuide(guide);
+            flashcards.add(flashcard);
+        }
+
+        return flashcards;
     }
 }
