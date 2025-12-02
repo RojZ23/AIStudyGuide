@@ -232,6 +232,7 @@
             display: flex;
             justify-content: space-between;
             margin-top: 32px;
+            gap: 12px;
         }
 
         .btn-save {
@@ -243,10 +244,16 @@
             font-weight: 500;
             cursor: pointer;
             transition: background-color 0.2s;
+            font-size: 16px;
         }
 
         .btn-save:hover {
             background-color: #1d4ed8;
+        }
+
+        .btn-save:disabled {
+            background-color: #94a3b8;
+            cursor: not-allowed;
         }
 
         .btn-delete {
@@ -262,6 +269,18 @@
 
         .btn-delete:hover {
             background-color: #fecaca;
+        }
+
+        /* Quiz Loading Message */
+        #quiz-loading-message {
+            display: none;
+            margin-top: 12px;
+            color: #2563eb;
+            font-weight: 600;
+            padding: 12px;
+            background-color: #e6f7ff;
+            border-radius: 8px;
+            border-left: 4px solid #2563eb;
         }
 
         /* Responsive Design */
@@ -299,7 +318,6 @@
 
             .action-buttons {
                 flex-direction: column;
-                gap: 12px;
             }
 
             .btn-save, .btn-delete {
@@ -341,14 +359,14 @@
         <div class="regenerate-section">
             <h3><i class="fas fa-robot"></i> AI Content Management</h3>
             <p>Regenerate AI content or edit the current AI-generated content.</p>
-            <div style="display: flex; gap: 12px; margin-top: 16px;">
-                <form action="/guides/${guide.id}/regenerate" method="post" style="display: inline;">
-                    <select name="difficulty" required style="padding: 6px; border-radius: 4px; border: 1px solid #ccc;">
+            <div style="display: flex; gap: 12px; margin-top: 16px; flex-wrap: wrap;">
+                <form id="regenerate-form" action="/guides/${guide.id}/regenerate" method="post" style="display: inline-flex; gap: 12px; align-items: center;">
+                    <select name="difficulty" required style="padding: 6px 12px; border-radius: 4px; border: 1px solid #ccc;">
                         <option value="basic">Basic</option>
                         <option value="detailed">Detailed</option>
                         <option value="very detailed">Very Detailed</option>
                     </select>
-                    <button id="submit-btn" type="submit" class="btn btn-primary" onclick="return confirm('This will regenerate all AI content. Continue?')">
+                    <button id="submit-btn" type="submit" class="btn btn-primary">
                         <i class="fas fa-sync-alt"></i> Regenerate All AI Content
                     </button>
                 </form>
@@ -422,9 +440,14 @@
         </div>
 
         <div class="action-buttons">
-            <form action="/guides/${guide.id}/quiz" method="post" style="display: inline;">
-                <button type="submit" class="btn-save"><i class="fas fa-play"></i> Generate & Save Quiz</button>
+            <form id="quiz-form" action="/guides/${guide.id}/quiz" method="post" style="display: inline;">
+                <button id="quiz-btn" type="submit" class="btn-save">
+                    <i class="fas fa-play"></i> Generate & Save Quiz
+                </button>
             </form>
+            <div id="quiz-loading-message">
+                <i class="fas fa-spinner fa-spin"></i> Quiz is being generated, please wait...
+            </div>
             <form action="/guides/${guide.id}/flashcards" method="post" style="display: inline;">
                 <button type="submit" class="btn btn-outline"
                         onclick="return confirm('Generate flashcards from key terms?')">
@@ -509,17 +532,26 @@
             form.style.display = 'none';
         });
     }
-</script>
-<script>
-    const form = document.querySelector('form');
-    const loadingMessage = document.getElementById('loading-message');
-    const submitBtn = document.getElementById('submit-btn');
 
-    form.addEventListener('submit', function(event) {
-        // Disable submit button to prevent double submission
+    // Regenerate form loading handler
+    document.getElementById('regenerate-form').addEventListener('submit', function(event) {
+        const submitBtn = document.getElementById('submit-btn');
+        const loadingMessage = document.getElementById('loading-message');
+
         submitBtn.disabled = true;
-        // Show loading message
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
         loadingMessage.style.display = 'block';
+    });
+
+    // Quiz form loading handler
+    document.getElementById('quiz-form').addEventListener('submit', function(event) {
+        const quizBtn = document.getElementById('quiz-btn');
+        const quizLoadingMessage = document.getElementById('quiz-loading-message');
+
+        // Show immediate feedback
+        quizBtn.disabled = true;
+        quizBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating Quiz...';
+        quizLoadingMessage.style.display = 'block';
     });
 </script>
 </body>
