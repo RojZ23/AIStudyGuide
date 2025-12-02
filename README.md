@@ -4,6 +4,14 @@ This a minimal Spring Boot app with JTE and Spring AI that lets users:
 - start study chats
 - ask questions and get AI answers
 - view past conversations
+- edit guide
+- regenerate guide
+- detailed, very detailed, basic generation
+- flashcards
+- quiz mode
+- list page
+- analytics page
+- forgot password/update password page
 
 
 ## Run
